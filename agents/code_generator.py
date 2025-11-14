@@ -2,13 +2,13 @@
 代码生成 Agent
 """
 import json
-from typing import Dict, List
 from pathlib import Path
-from jinja2 import Template
+from typing import Dict, List
+
 from loguru import logger
 
-from utils.llm_client import LLMClient
 from config.settings import Settings
+from utils.llm_client import LLMClient
 
 
 class CodeGeneratorAgent:

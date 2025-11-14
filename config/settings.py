@@ -18,6 +18,10 @@ class Settings(BaseModel):
     # 视觉理解专用模型配置 (Stage 2)
     vision_model: str = Field(default_factory=lambda: os.getenv("VISION_MODEL", os.getenv("OPENAI_MODEL", "gpt-4-vision-preview")))
 
+    # 并行处理配置 (新增)
+    vision_parallel: bool = Field(default_factory=lambda: os.getenv("VISION_PARALLEL", "true").lower() == "true")
+    vision_max_workers: int = Field(default_factory=lambda: int(os.getenv("VISION_MAX_WORKERS", "4")))
+
     # Playwright配置
     headless: bool = Field(default_factory=lambda: os.getenv("HEADLESS", "true").lower() == "true")
     timeout: int = Field(default_factory=lambda: int(os.getenv("TIMEOUT", "30000")))
@@ -53,4 +57,3 @@ class Settings(BaseModel):
         """Pydantic配置"""
         env_file = ".env"
         env_file_encoding = "utf-8"
-

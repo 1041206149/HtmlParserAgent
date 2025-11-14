@@ -2,13 +2,16 @@
 视觉理解 Agent
 """
 import json
-from typing import Dict, List, Optional
+from typing import Dict, List  # 移除未使用的 Optional
 from pathlib import Path
 from loguru import logger
 
 from utils.llm_client import LLMClient
 from utils.screenshot import ScreenshotTool
 from config.settings import Settings
+
+# 新增: 并行处理所需
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 
 class VisualUnderstandingAgent:
@@ -66,12 +69,32 @@ class VisualUnderstandingAgent:
             overlap=200
         )
 
-        # 3. 分析每个图片块
-        chunk_results = []
-        for i, chunk_path in enumerate(chunks):
-            logger.info(f"分析图片块 {i+1}/{len(chunks)}")
-            result = self._analyze_screenshot(chunk_path, i)
-            chunk_results.append(result)
+        # 3. 分析每个图片块（支持并行）
+        chunk_results: List[Dict] = []
+        if self.settings.vision_parallel and len(chunks) > 1:
+            logger.info(f"开始并行分析 {len(chunks)} 个图片块 (max_workers={self.settings.vision_max_workers})")
+            # 预分配结果列表，保持索引顺序
+            chunk_results = [{} for _ in chunks]
+            with ThreadPoolExecutor(max_workers=self.settings.vision_max_workers) as executor:
+                future_map = {
+                    executor.submit(self._analyze_screenshot, chunk_path, idx): idx
+                    for idx, chunk_path in enumerate(chunks)
+                }
+                for future in as_completed(future_map):
+                    idx = future_map[future]
+                    try:
+                        result = future.result()
+                        chunk_results[idx] = result
+                        logger.debug(f"图片块 {idx+1} 分析完成")
+                    except Exception as e:
+                        logger.error(f"图片块 {idx+1} 分析失败: {e}")
+            logger.info("并行图片块分析完成")
+        else:
+            logger.info(f"开始顺序分析 {len(chunks)} 个图片块")
+            for i, chunk_path in enumerate(chunks):
+                logger.info(f"分析图片块 {i+1}/{len(chunks)}")
+                result = self._analyze_screenshot(chunk_path, i)
+                chunk_results.append(result)
 
         # 4. 合并结果
         merged_result = self._merge_results(chunk_results)
@@ -204,9 +227,9 @@ class VisualUnderstandingAgent:
             解析后的字典
         """
         try:
-            # 尝试提取JSON
             import re
-            json_match = re.search(r'\{.*\}', response, re.DOTALL)
+            # 简化正则，避免不必要的转义警告
+            json_match = re.search(r"{.*}", response, re.DOTALL)
             if json_match:
                 return json.loads(json_match.group())
             else:
@@ -259,10 +282,11 @@ class VisualUnderstandingAgent:
                     # 检查第一个元素类型
                     if isinstance(all_values[0], dict):
                         # 对于字典列表，使用JSON字符串去重
+                        import json as _json
                         seen = set()
                         unique_values = []
                         for item in all_values:
-                            item_str = json.dumps(item, sort_keys=True, ensure_ascii=False)
+                            item_str = _json.dumps(item, sort_keys=True, ensure_ascii=False)
                             if item_str not in seen:
                                 seen.add(item_str)
                                 unique_values.append(item)

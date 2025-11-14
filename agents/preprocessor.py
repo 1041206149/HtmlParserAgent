@@ -1,13 +1,14 @@
 """
 HTML预处理器 Agent
 """
-from typing import Dict, List
 from pathlib import Path
+from typing import Dict
+
 import requests
 from loguru import logger
 
-from utils.html_chunker import HtmlChunker
 from config.settings import Settings
+from utils.html_chunker import HtmlChunker
 
 
 class HtmlPreprocessor:
