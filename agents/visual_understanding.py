@@ -28,12 +28,7 @@ class VisualUnderstandingAgent:
             settings: 配置对象
         """
         self.settings = settings
-        self.llm_client = LLMClient(
-            api_key=settings.openai_api_key,
-            api_base=settings.openai_api_base,
-            model=settings.vision_model,  # 使用视觉理解专用模型
-            temperature=settings.openai_temperature
-        )
+        self.llm_client = LLMClient.from_settings(settings, model=settings.vision_model)
         self.screenshot_tool = ScreenshotTool(
             headless=settings.headless,
             timeout=settings.timeout,

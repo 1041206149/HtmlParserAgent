@@ -119,7 +119,3 @@ data = parser.parse("https://example.com/new-article")
 ## License
 
 MIT License
-
-# HtmlParserAgent
-# HtmlParserAgent
-# HtmlParserAgent

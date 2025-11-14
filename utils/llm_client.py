@@ -37,6 +37,24 @@ class LLMClient:
 
         logger.info(f"LLM客户端初始化完成 - 模型: {self.model}, Base: {self.api_base}")
 
+    @classmethod
+    def from_settings(cls, settings, model: Optional[str] = None):
+        """从Settings对象创建LLMClient
+
+        Args:
+            settings: Settings配置对象
+            model: 可选的模型名称覆盖（如vision_model）
+
+        Returns:
+            LLMClient实例
+        """
+        return cls(
+            api_key=settings.openai_api_key,
+            api_base=settings.openai_api_base,
+            model=model or settings.openai_model,
+            temperature=settings.openai_temperature
+        )
+
     def chat_completion(
         self,
         messages: List[Dict[str, Any]],
