@@ -2,10 +2,21 @@
 LLM客户端封装
 """
 import os
+from pathlib import Path
 from typing import List, Dict, Any, Optional
-from openai import OpenAI
-from loguru import logger
 
+from dotenv import load_dotenv
+from loguru import logger
+from openai import OpenAI
+
+# 加载项目根目录的 .env 文件
+project_root = Path(__file__).parent.parent
+env_path = project_root / ".env"
+load_dotenv(env_path)
+
+# 验证
+if not os.getenv("OPENAI_API_KEY"):
+    raise ValueError(f".env 文件路径: {env_path}, API Key未加载")
 
 class LLMClient:
     """LLM客户端封装类"""
@@ -36,6 +47,24 @@ class LLMClient:
         )
 
         logger.info(f"LLM客户端初始化完成 - 模型: {self.model}, Base: {self.api_base}")
+
+    @classmethod
+    def from_settings(cls, settings, model: Optional[str] = None):
+        """从Settings对象创建LLMClient
+
+        Args:
+            settings: Settings配置对象
+            model: 可选的模型名称覆盖（如vision_model）
+
+        Returns:
+            LLMClient实例
+        """
+        return cls(
+            api_key=settings.openai_api_key,
+            api_base=settings.openai_api_base,
+            model=model or settings.openai_model,
+            temperature=settings.openai_temperature
+        )
 
     def chat_completion(
         self,

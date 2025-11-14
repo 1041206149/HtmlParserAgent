@@ -27,12 +27,7 @@ class CodeGeneratorAgent:
             settings: 配置对象
         """
         self.settings = settings
-        self.llm_client = LLMClient(
-            api_key=settings.openai_api_key,
-            api_base=settings.openai_api_base,
-            model=settings.openai_model,
-            temperature=settings.openai_temperature
-        )
+        self.llm_client = LLMClient.from_settings(settings)
 
         logger.info("代码生成Agent初始化完成")
 
