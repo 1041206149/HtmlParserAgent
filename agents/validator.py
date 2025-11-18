@@ -156,8 +156,7 @@ class ValidationOrchestrator:
             result = self.code_generator.process(
                 html_content=html_content,
                 target_json=target_json,
-                output_dir=str(output_path / f"iteration_{iteration}"),
-                failed_cases=failed_cases
+                output_dir=str(output_path / f"iteration_{iteration}")
             )
 
             parser_path = result['parser_path']

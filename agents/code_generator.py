@@ -3,7 +3,7 @@
 """
 import json
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict
 
 from loguru import logger
 
@@ -35,8 +35,7 @@ class CodeGeneratorAgent:
         self,
         html_content: str,
         target_json: Dict,
-        output_dir: str,
-        failed_cases: List[Dict] = None
+        output_dir: str
     ) -> Dict:
         """生成解析代码
 
@@ -44,7 +43,6 @@ class CodeGeneratorAgent:
             html_content: HTML内容
             target_json: 目标JSON结构
             output_dir: 输出目录
-            failed_cases: 失败案例（用于迭代优化）
 
         Returns:
             生成结果
@@ -54,7 +52,7 @@ class CodeGeneratorAgent:
 
         # 1. 构建提示词
         prompt = self._build_code_generation_prompt(
-            html_content, target_json, failed_cases
+            html_content, target_json
         )
 
         # 2. 调用LLM生成代码
@@ -83,15 +81,13 @@ class CodeGeneratorAgent:
     def _build_code_generation_prompt(
         self,
         html_content: str,
-        target_json: Dict,
-        failed_cases: List[Dict] = None
+        target_json: Dict
     ) -> str:
         """构建代码生成提示词
 
         Args:
             html_content: HTML内容
             target_json: 目标JSON
-            failed_cases: 失败案例
 
         Returns:
             提示词
@@ -119,25 +115,9 @@ class CodeGeneratorAgent:
 2. 使用 BeautifulSoup 和 lxml 进行解析
 3. 实现 `parse(html: str) -> dict` 方法
 4. 为每个字段编写提取逻辑，使用XPath或CSS选择器
-5. 添加异常处理和降级策略
-6. 尽量使用类名、ID等稳定属性，避免使用绝对索引
-7. 添加详细注释说明提取逻辑
+5. 尽量使用类名、ID等稳定属性，避免使用绝对索引
+6. 代码尽量简洁，减少冗余
 
-"""
-
-        # 如果有失败案例，添加优化提示
-        if failed_cases:
-            prompt += f"""
-## 失败案例（需要优化）
-以下是之前版本在其他页面上的失败情况，请针对性优化：
-```json
-{json.dumps(failed_cases[:3], ensure_ascii=False, indent=2)}
-```
-
-优化建议：
-- 使用更通用的选择器
-- 添加多个候选路径
-- 增强容错处理
 """
 
         prompt += """

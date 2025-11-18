@@ -156,64 +156,41 @@ class VisualUnderstandingAgent:
             提示词
         """
         prompt = f"""
-请分析这张网页截图（第 {chunk_index + 1} 部分），提取出页面中的关键信息，并按照以下JSON格式返回：
+请仔细观察这张网页截图（第 {chunk_index + 1} 部分），识别并提取页面中的关键信息字段。
+
+你需要：
+1. 自主判断页面类型（如：文章页、列表页、商品页、表单页等）
+2. 识别页面中存在的关键字段（例如标题、日期、正文等），非关键信息（例如导航栏、页脚、图片等）请忽略
+3. value字段提取实际值，不要生成页面不存在的内容
+4. 为每个识别到的字段提取内容，如果某个片段过长，可以适当截断
+
+
+返回JSON格式如下：
 
 {{
-  "title": {{
-    "type": "string",
-    "description": "文章标题",
-    "value": "提取的标题文本",
+  "字段名1": {{
+    "type": "string|number|array|object",
+    "description": "该字段的语义描述（中文）",
+    "value": "提取的实际值",
     "confidence": 0.95
   }},
-  "author": {{
-    "type": "string",
-    "description": "文章作者",
-    "value": "提取的作者名",
+  "字段名2": {{
+    "type": "...",
+    "description": "...",
+    "value": ...,
     "confidence": 0.90
   }},
-  "publish_time": {{
-    "type": "string",
-    "description": "发布时间",
-    "value": "2024-01-01",
-    "confidence": 0.85
-  }},
-  "content": {{
-    "type": "string",
-    "description": "文章正文内容",
-    "value": "提取的正文...",
-    "confidence": 0.90
-  }},
-  "images": {{
-    "type": "array",
-    "description": "文章配图URL列表",
-    "value": [],
-    "confidence": 0.80
-  }},
-  "tags": {{
-    "type": "array",
-    "description": "文章标签",
-    "value": [],
-    "confidence": 0.75
-  }},
-  "related_posts": {{
-    "type": "array",
-    "description": "相关文章列表",
-    "value": [],
-    "confidence": 0.70
-  }},
-  "comments": {{
-    "type": "array",
-    "description": "评论列表",
-    "value": [],
-    "confidence": 0.65
-  }}
+  ...
 }}
 
-注意：
-1. 只返回JSON格式，不要其他说明文字
-2. 为每个字段标注置信度(0-1)
-3. 如果某个字段在图片中不可见，value设为null，confidence设为0
-4. 尽可能提取完整的文本内容
+**常见字段参考**（但不限于）：
+- 文章类：title, author, publish_time, summary, content, category, tags, views, likes, comments
+
+**要求**：
+1. 只返回JSON，不要其他说明文字
+2. 字段名使用英文，采用snake_case命名
+3. 为每个字段标注type、description、value和confidence(0-1)
+4. 如果某部分信息不清晰，降低confidence值
 """
         return prompt
 
