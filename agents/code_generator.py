@@ -65,7 +65,7 @@ class CodeGeneratorAgent:
 
         # 4. 生成配置文件
         config = self._generate_config(target_json)
-        config_path = output_path / "parser_config.json"
+        config_path = output_path / "schema.json"
         with open(config_path, 'w', encoding='utf-8') as f:
             json.dump(config, f, ensure_ascii=False, indent=2)
 
