@@ -1,5 +1,5 @@
 """
-LLM客户端封装
+LLM客户端封装 - 使用 LangChain 1.0
 支持基于场景的模型配置
 """
 import os
@@ -8,7 +8,7 @@ from typing import List, Dict, Any, Optional, Literal
 
 from dotenv import load_dotenv
 from loguru import logger
-from openai import OpenAI
+from langchain_openai import ChatOpenAI
 
 # 加载项目根目录的 .env 文件
 project_root = Path(__file__).parent.parent
@@ -24,7 +24,7 @@ ScenarioType = Literal["default", "code_gen", "vision", "agent"]
 
 
 class LLMClient:
-    """LLM客户端封装类
+    """LLM客户端封装类 - 基于 LangChain 1.0
 
     支持多种使用方式：
     1. 直接初始化：LLMClient(model="gpt-4")
@@ -48,13 +48,16 @@ class LLMClient:
             temperature: 温度参数
         """
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
-        self.api_base = api_base or os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
-        self.model = model or os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")
+        self.api_base = api_base or os.getenv("OPENAI_API_BASE", "http://35.220.164.252:3888/v1")
+        self.model = model or os.getenv("DEFAULT_MODEL", "claude-sonnet-4-5-20250929")
         self.temperature = temperature
 
-        self.client = OpenAI(
+        # 使用 LangChain 1.0 的 ChatOpenAI（兼容所有模型）
+        self.client = ChatOpenAI(
+            model=self.model,
             api_key=self.api_key,
-            base_url=self.api_base
+            base_url=self.api_base,
+            temperature=self.temperature
         )
 
         logger.info(f"LLM客户端初始化完成 - 模型: {self.model}, Base: {self.api_base}")
@@ -100,24 +103,24 @@ class LLMClient:
             >>> llm = LLMClient.for_scenario("vision")
         """
         api_key = os.getenv("OPENAI_API_KEY")
-        api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+        api_base = os.getenv("OPENAI_API_BASE", "http://35.220.164.252:3888/v1")
 
         # 根据场景选择配置
         scenario_configs = {
             "default": {
-                "model": os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview"),
+                "model": os.getenv("DEFAULT_MODEL", "claude-sonnet-4-5-20250929"),
                 "temperature": float(os.getenv("DEFAULT_TEMPERATURE", "0"))
             },
             "code_gen": {
-                "model": os.getenv("CODE_GEN_MODEL", os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")),
+                "model": os.getenv("CODE_GEN_MODEL", "claude-sonnet-4-5-20250929"),
                 "temperature": float(os.getenv("CODE_GEN_TEMPERATURE", "0.3"))
             },
             "vision": {
-                "model": os.getenv("VISION_MODEL", os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")),
+                "model": os.getenv("VISION_MODEL", "qwen-vl-max"),
                 "temperature": float(os.getenv("VISION_TEMPERATURE", "0"))
             },
             "agent": {
-                "model": os.getenv("AGENT_MODEL", os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")),
+                "model": os.getenv("AGENT_MODEL", "claude-sonnet-4-5-20250929"),
                 "temperature": float(os.getenv("AGENT_TEMPERATURE", "0"))
             }
         }
@@ -152,15 +155,9 @@ class LLMClient:
             模型响应文本
         """
         try:
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=messages,
-                temperature=temperature or self.temperature,
-                max_tokens=max_tokens,
-                **kwargs
-            )
-
-            return response.choices[0].message.content
+            # 使用 LangChain 1.0 的 invoke 方法
+            response = self.client.invoke(messages)
+            return response.content
 
         except Exception as e:
             logger.error(f"LLM调用失败: {e}")
@@ -201,9 +198,11 @@ class LLMClient:
 
         messages = [{"role": "user", "content": content}]
 
-        return self.chat_completion(
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens
-        )
+        # 使用 LangChain 1.0 的 invoke 方法
+        try:
+            response = self.client.invoke(messages)
+            return response.content
+        except Exception as e:
+            logger.error(f"视觉模型调用失败: {e}")
+            raise
 

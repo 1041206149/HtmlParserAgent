@@ -1,19 +1,19 @@
 """
 代码生成工具
-输入json 和 html 生成解析代码
+从HTML和JSON Schema生成解析代码
 """
-import os
 import json
+import os
 from pathlib import Path
 from typing import Dict
-from langchain_core.tools import tool
 from loguru import logger
-from config.settings import Settings
-from utils.llm_client import LLMClient
+from config.settings import settings
+from langchain_core.tools import tool
 
 
 def _build_code_generation_prompt(html_content: str, target_json: Dict) -> str:
     """构建代码生成提示词"""
+    # 截断过长的HTML
     if len(html_content) > 30000:
         html_content = html_content[:30000] + "\n... (截断)"
 
@@ -35,14 +35,27 @@ def _build_code_generation_prompt(html_content: str, target_json: Dict) -> str:
 1. 生成一个名为 `WebPageParser` 的Python类
 2. 使用 BeautifulSoup 和 lxml 进行解析
 3. 实现 `parse(html: str) -> dict` 方法
-4. 为每个字段编写提取逻辑，使用XPath或CSS选择器
+4. 为每个字段编写提取逻辑，使用CSS选择器或XPath
 5. 尽量使用类名、ID等稳定属性，避免使用绝对索引
 6. 代码尽量简洁，减少冗余
+7. 添加适当的错误处理
 
-## 输出格式
-请直接输出完整的Python代码，不要包含markdown代码块标记（不要用 ```python 或 ```），不要包含其他说明文字。
-代码应该可以直接保存为.py文件运行。
-确保代码完整，所有方法和函数都要有完整的实现。
+## 输出格式 - 重要！
+**严格要求：**
+1. 直接输出纯Python代码，从 `import` 语句开始
+2. **绝对不要**使用任何markdown标记，包括：
+   - 不要使用 ```python
+   - 不要使用 ```
+   - 不要使用任何反引号
+3. 不要包含任何说明文字、注释或解释
+4. 代码必须可以直接保存为.py文件并运行
+5. 确保代码完整，所有方法和函数都要有完整的实现
+
+**正确示例（直接从import开始）：**
+import sys
+import json
+from pathlib import Path
+...
 
 ## 使用示例要求
 在 `if __name__ == '__main__'` 部分，生成一个灵活的使用示例：
@@ -51,40 +64,57 @@ def _build_code_generation_prompt(html_content: str, target_json: Dict) -> str:
 3. 如果是文件路径，直接读取文件
 4. 默认参数示例：使用命令行参数 sys.argv[1]，默认为当前目录的 'sample.html'
 """
-
     return prompt
 
+
 @tool
-def generate_code_from_html(html_content: str, target_json: Dict, output_dir: str, settings: Settings ) -> Dict:
-    """ 从HTML和目标JSON生成解析代码
+def generate_parser_code(html_content: str, target_json: Dict, output_dir: str = "generated_parsers") -> Dict:
+    """
+    从HTML和目标JSON生成BeautifulSoup解析代码
+
     Args:
         html_content: HTML内容
         target_json: 目标JSON结构
         output_dir: 输出目录
-        settings: 配置对象
 
     Returns:
         生成结果，包括代码路径和配置路径
     """
     try:
-        # 初始化 LLM 客户端（使用代码生成场景）
-        llm_client = LLMClient.for_scenario("code_gen")
+        logger.info("正在生成解析代码...")
+
+        # 使用 LangChain 1.0 的 ChatOpenAI
+        from langchain_openai import ChatOpenAI
+
+        model = ChatOpenAI(
+            model=settings.code_gen_model,
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url=os.getenv("OPENAI_API_BASE"),
+            temperature=settings.code_gen_temperature
+        )
 
         # 构建提示词
         prompt = _build_code_generation_prompt(html_content, target_json)
 
         # 调用 LLM 生成代码
-        logger.info("调用LLM生成解析代码...")
-        response = llm_client.chat_completion(
-            messages=[
-                {"role": "system", "content": "你是一个专业的Python代码生成助手。"},
-                {"role": "user", "content": prompt}
-            ],
-            max_tokens=settings.code_gen_max_tokens if settings else int(os.getenv("CODE_GEN_MAX_TOKENS", "8192"))
-        )
+        messages = [
+            {"role": "system", "content": "你是一个专业的Python代码生成助手。"},
+            {"role": "user", "content": prompt}
+        ]
 
-        # 提取生成的代码
-        generated_code = response.strip()
+        response = model.invoke(messages)
+
+        # 提取生成的代码并清理 markdown 标记
+        generated_code = response.content.strip()
+
+        # 移除 markdown 代码块标记
+        if generated_code.startswith("```python"):
+            generated_code = generated_code[len("```python"):].strip()
+        elif generated_code.startswith("```"):
+            generated_code = generated_code[3:].strip()
+
+        if generated_code.endswith("```"):
+            generated_code = generated_code[:-3].strip()
 
         # 保存生成的代码
         output_path = Path(output_dir)
@@ -113,7 +143,7 @@ def generate_code_from_html(html_content: str, target_json: Dict, output_dir: st
         with open(config_path, 'w', encoding='utf-8') as f:
             json.dump(config, f, ensure_ascii=False, indent=2)
 
-        logger.info(f"代码生成完成: {parser_path}")
+        logger.success(f"代码生成完成: {parser_path}")
 
         return {
             'parser_path': str(parser_path),
@@ -123,5 +153,6 @@ def generate_code_from_html(html_content: str, target_json: Dict, output_dir: st
         }
 
     except Exception as e:
-        logger.error(f"代码生成失败: {str(e)}")
-        return {"error": f"代码生成失败: {str(e)}"}
+        error_msg = f"代码生成失败: {str(e)}"
+        logger.error(error_msg)
+        raise Exception(error_msg)

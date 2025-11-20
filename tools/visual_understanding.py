@@ -1,14 +1,14 @@
 """
 图片 → JSON 结构化信息提取工具
-一次性输入整张图片，不做分块。
+从网页截图中提取结构化信息
 """
-import os
 import json
 import base64
 import re
 from typing import Dict
+from loguru import logger
 from langchain_core.tools import tool
-from utils.llm_client import LLMClient
+from config.settings import settings
 
 
 def _image_to_base64(image_path: str) -> str:
@@ -18,7 +18,7 @@ def _image_to_base64(image_path: str) -> str:
 
 
 def _build_prompt() -> str:
-    """构建视觉模型提示词（来自你原来的 _build_vision_prompt）"""
+    """构建视觉模型提示词"""
     return """
 请仔细观察整张网页截图，识别并提取页面中的关键信息字段。
 
@@ -40,66 +40,90 @@ def _build_prompt() -> str:
 }
 
 要求：
-1. 只返回 JSON，无任何解释文本
-2. 字段名必须使用英文 snake_case
-3. 每个字段必须有 type / description / value / confidence
+1. **只返回纯JSON，不要使用markdown代码块标记（不要用 ```json 或 ```）**
+2. 无任何解释文本，直接从 { 开始
+3. 字段名必须使用英文 snake_case
+4. 每个字段必须有 type / description / value / confidence
 """
 
 
 def _parse_llm_response(response: str) -> Dict:
     """解析模型响应中的 JSON"""
     try:
-        match = re.search(r"{.*}", response, re.DOTALL)
+        # 尝试提取JSON
+        match = re.search(r"\{.*\}", response, re.DOTALL)
         if match:
             return json.loads(match.group())
         return json.loads(response)
     except Exception as e:
-        return {"error": f"解析模型响应失败: {str(e)}"}
+        logger.error(f"解析模型响应失败: {str(e)}")
+        raise Exception(f"解析模型响应失败: {str(e)}")
 
 
 @tool
-def extract_json_from_image(image_path: str, model: str = None) -> Dict:
+def extract_json_from_image(image_path: str) -> Dict:
     """
-    从图片中提取结构化页面信息（一次性分析整张图）
+    从网页截图中提取结构化页面信息
 
     Args:
         image_path: 图片文件路径
-        model: 使用的视觉模型，默认使用配置文件中的 VISION_MODEL
 
     Returns:
         dict: 模型解析得到的结构化 JSON
     """
     try:
+        logger.info(f"正在从图片提取结构化信息: {image_path}")
+
         # 1. 图片转 base64
         image_data = _image_to_base64(image_path)
 
         # 2. 构建提示词
         prompt = _build_prompt()
 
-        # 3. 创建 LLM 客户端（使用视觉理解场景）
-        if model:
-            # 如果指定了模型，使用指定的模型
-            llm = LLMClient(model=model)
-        else:
-            # 否则使用视觉场景的默认配置
-            llm = LLMClient.for_scenario("vision")
+        # 3. 使用 LangChain 1.0 的 ChatOpenAI
+        from langchain_openai import ChatOpenAI
+        import os
 
-        # 4. 调用视觉模型
-        response = llm.vision_completion(
-            prompt=prompt,
-            image_data=image_data,
-            max_tokens=int(os.getenv("VISION_MAX_TOKENS", "4096"))
+        model = ChatOpenAI(
+            model=settings.vision_model,
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url=os.getenv("OPENAI_API_BASE"),
+            temperature=settings.vision_temperature
         )
 
+        # 4. 调用视觉模型
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/png;base64,{image_data}"}
+                    }
+                ]
+            }
+        ]
+
+        response = model.invoke(messages)
+
         # 5. 提取 JSON
-        return _parse_llm_response(response)
+        # 处理不同类型的响应
+        if hasattr(response, 'content'):
+            content = response.content
+        elif isinstance(response, str):
+            content = response
+        else:
+            content = str(response)
+
+        result = _parse_llm_response(content)
+
+        logger.success(f"成功提取 {len(result)} 个字段")
+        return result
 
     except Exception as e:
-        return {"error": f"图片处理失败: {str(e)}"}
-
-
-if __name__ == "__main__":
-    # 本地测试
-    path = "test.png"
-    result = extract_json_from_image.invoke({"image_path": path})
-    print(json.dumps(result, ensure_ascii=False, indent=2))
+        import traceback
+        error_msg = f"图片处理失败: {str(e)}"
+        logger.error(error_msg)
+        logger.error(f"详细错误: {traceback.format_exc()}")
+        raise Exception(error_msg)

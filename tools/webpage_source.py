@@ -2,9 +2,10 @@
 获取网页源码工具
 使用 DrissionPage 获取网页的HTML源代码
 """
-from langchain_core.tools import tool
 from DrissionPage import ChromiumPage, ChromiumOptions
-from typing import Optional
+from loguru import logger
+from config.settings import settings
+from langchain_core.tools import tool
 
 
 @tool
@@ -18,15 +19,13 @@ def get_webpage_source(url: str, wait_time: int = 3) -> str:
 
     Returns:
         网页的HTML源代码字符串
-
-    Examples:
-        >>> source = get_webpage_source("https://www.example.com")
-        >>> print(source[:100])  # 打印前100个字符
     """
     try:
+        logger.info(f"正在获取网页源码: {url}")
+
         # 配置无头模式
         co = ChromiumOptions()
-        co.headless(True)
+        co.headless(settings.headless)
 
         # 创建页面对象
         page = ChromiumPage(addr_or_opts=co)
@@ -43,17 +42,11 @@ def get_webpage_source(url: str, wait_time: int = 3) -> str:
         # 关闭浏览器
         page.quit()
 
+        logger.success(f"成功获取网页源码，长度: {len(html_source)} 字符")
         return html_source
 
     except Exception as e:
-        return f"获取网页源码失败: {str(e)}"
-
-
-if __name__ == "__main__":
-    # 测试工具
-    test_url = "https://www.example.com"
-    print(f"正在获取 {test_url} 的源码...")
-    source = get_webpage_source.invoke({"url": test_url, "wait_time": 2})
-    print(f"源码长度: {len(source)} 字符")
-    print(f"源码预览:\n{source[:200]}...")
+        error_msg = f"获取网页源码失败: {str(e)}"
+        logger.error(error_msg)
+        raise Exception(error_msg)
 
