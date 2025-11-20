@@ -40,12 +40,13 @@ class AgentValidator:
         
         results = {
             'parser_path': parser_path,
-            'test_results': [],
+            'tests': [],  # 使用'tests'而不是'test_results'以保持一致性
+            'test_results': [],  # 保留向后兼容
             'success_rate': 0.0,
             'passed': False,
             'issues': [],
         }
-        
+
         # 加载解析器
         try:
             parser_class = self._load_parser(parser_path)
@@ -53,15 +54,16 @@ class AgentValidator:
             logger.error(f"加载解析器失败: {str(e)}")
             results['issues'].append(f"加载失败: {str(e)}")
             return results
-        
+
         # 测试每个URL
         success_count = 0
         for url in test_urls:
             test_result = self._test_url(parser_class, url)
-            results['test_results'].append(test_result)
+            results['tests'].append(test_result)
+            results['test_results'].append(test_result)  # 向后兼容
             if test_result['success']:
                 success_count += 1
-        
+
         # 计算成功率
         results['success_rate'] = success_count / len(test_urls) if test_urls else 0
         results['passed'] = results['success_rate'] >= settings.success_threshold
@@ -93,8 +95,9 @@ class AgentValidator:
             'success': False,
             'data': None,
             'error': None,
+            'details': '',  # 添加详细信息字段
         }
-        
+
         try:
             logger.info(f"  测试URL: {url}")
 
@@ -103,20 +106,24 @@ class AgentValidator:
 
             # 解析
             data = parser.parse(html)
-            
+
             # 检查结果
             if data and isinstance(data, dict) and len(data) > 0:
                 result['success'] = True
                 result['data'] = data
+                result['details'] = f"成功提取 {len(data)} 个字段: {', '.join(data.keys())}"
                 logger.success(f"  ✓ 解析成功，提取 {len(data)} 个字段")
             else:
                 result['error'] = "解析结果为空或格式错误"
+                result['details'] = f"返回类型: {type(data)}, 内容: {str(data)[:100]}"
                 logger.warning(f"  ✗ {result['error']}")
-                
+
         except Exception as e:
+            import traceback
             result['error'] = str(e)
+            result['details'] = traceback.format_exc()
             logger.error(f"  ✗ 解析失败: {str(e)}")
-        
+
         return result
     
     def diagnose_issues(self, validation_result: Dict) -> List[str]:
