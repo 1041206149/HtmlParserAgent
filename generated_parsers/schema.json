@@ -1,0 +1,35 @@
+{
+  "version": "1.0",
+  "fields": {
+    "title": {
+      "type": "string",
+      "description": "文章标题",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "description": "文章作者",
+      "required": true
+    },
+    "publish_date": {
+      "type": "string",
+      "description": "发布日期",
+      "required": true
+    },
+    "content": {
+      "type": "string",
+      "description": "文章正文内容",
+      "required": true
+    },
+    "tags": {
+      "type": "array",
+      "description": "文章标签",
+      "required": true
+    }
+  },
+  "options": {
+    "encoding": "utf-8",
+    "timeout": 30,
+    "retry": 3
+  }
+}

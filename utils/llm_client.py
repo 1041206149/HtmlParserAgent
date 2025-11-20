@@ -1,9 +1,10 @@
 """
 LLM客户端封装
+支持基于场景的模型配置
 """
 import os
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any, Optional, Literal
 
 from dotenv import load_dotenv
 from loguru import logger
@@ -18,8 +19,18 @@ load_dotenv(env_path)
 if not os.getenv("OPENAI_API_KEY"):
     raise ValueError(f".env 文件路径: {env_path}, API Key未加载")
 
+# 定义场景类型
+ScenarioType = Literal["default", "code_gen", "vision", "agent"]
+
+
 class LLMClient:
-    """LLM客户端封装类"""
+    """LLM客户端封装类
+
+    支持多种使用方式：
+    1. 直接初始化：LLMClient(model="gpt-4")
+    2. 从Settings创建：LLMClient.from_settings(settings)
+    3. 按场景创建：LLMClient.for_scenario("code_gen")
+    """
 
     def __init__(
         self,
@@ -38,7 +49,7 @@ class LLMClient:
         """
         self.api_key = api_key or os.getenv("OPENAI_API_KEY")
         self.api_base = api_base or os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
-        self.model = model or os.getenv("OPENAI_MODEL", "gpt-4-vision-preview")
+        self.model = model or os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")
         self.temperature = temperature
 
         self.client = OpenAI(
@@ -49,12 +60,13 @@ class LLMClient:
         logger.info(f"LLM客户端初始化完成 - 模型: {self.model}, Base: {self.api_base}")
 
     @classmethod
-    def from_settings(cls, settings, model: Optional[str] = None):
+    def from_settings(cls, settings, model: Optional[str] = None, temperature: Optional[float] = None):
         """从Settings对象创建LLMClient
 
         Args:
             settings: Settings配置对象
-            model: 可选的模型名称覆盖（如vision_model）
+            model: 可选的模型名称覆盖
+            temperature: 可选的温度参数覆盖
 
         Returns:
             LLMClient实例
@@ -62,8 +74,63 @@ class LLMClient:
         return cls(
             api_key=settings.openai_api_key,
             api_base=settings.openai_api_base,
-            model=model or settings.openai_model,
-            temperature=settings.openai_temperature
+            model=model or settings.default_model,
+            temperature=temperature or settings.default_temperature
+        )
+
+    @classmethod
+    def for_scenario(cls, scenario: ScenarioType = "default"):
+        """根据场景创建LLMClient（推荐使用）
+
+        Args:
+            scenario: 使用场景
+                - "default": 默认场景
+                - "code_gen": 代码生成场景
+                - "vision": 视觉理解场景
+                - "agent": Agent场景
+
+        Returns:
+            LLMClient实例
+
+        Examples:
+            >>> # 代码生成场景
+            >>> llm = LLMClient.for_scenario("code_gen")
+            >>>
+            >>> # 视觉理解场景
+            >>> llm = LLMClient.for_scenario("vision")
+        """
+        api_key = os.getenv("OPENAI_API_KEY")
+        api_base = os.getenv("OPENAI_API_BASE", "https://api.openai.com/v1")
+
+        # 根据场景选择配置
+        scenario_configs = {
+            "default": {
+                "model": os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview"),
+                "temperature": float(os.getenv("DEFAULT_TEMPERATURE", "0"))
+            },
+            "code_gen": {
+                "model": os.getenv("CODE_GEN_MODEL", os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")),
+                "temperature": float(os.getenv("CODE_GEN_TEMPERATURE", "0.3"))
+            },
+            "vision": {
+                "model": os.getenv("VISION_MODEL", os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")),
+                "temperature": float(os.getenv("VISION_TEMPERATURE", "0"))
+            },
+            "agent": {
+                "model": os.getenv("AGENT_MODEL", os.getenv("DEFAULT_MODEL", "gpt-4-vision-preview")),
+                "temperature": float(os.getenv("AGENT_TEMPERATURE", "0"))
+            }
+        }
+
+        config = scenario_configs.get(scenario, scenario_configs["default"])
+
+        logger.info(f"创建 {scenario} 场景的LLM客户端 - 模型: {config['model']}")
+
+        return cls(
+            api_key=api_key,
+            api_base=api_base,
+            model=config["model"],
+            temperature=config["temperature"]
         )
 
     def chat_completion(
