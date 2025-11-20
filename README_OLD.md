@@ -24,14 +24,14 @@
 
 ### 1.1 项目概述
 
-**HtmlParserAgent** 是一个基于langchain1.0框架的智能Agent系统，能够自动分析网页结构并生成高质量的Python解析代码。
+**HtmlParserAgent** 是一个基于大语言模型（LLM）和视觉模型（VLM）的智能Agent系统，能够自动分析网页结构并生成高质量的Python解析代码。
 
 ### 1.2 核心能力
 
 只需提供几个示例URL，Agent就能自动完成：
 
 1. 📸 **自动获取网页源码和截图** - 使用DrissionPage获取完整页面内容
-2. 🔍 **使用视觉模型分析页面结构** - 通过VLLM理解页面布局和数据结构
+2. 🔍 **使用视觉模型分析页面结构** - 通过qwen-vl-max理解页面布局和数据结构
 3. 💻 **生成可直接使用的BeautifulSoup解析代码** - 使用Claude生成高质量、可维护的代码
 4. ✅ **自动验证生成代码的正确性** - 在真实URL上测试生成的代码
 5. 🔄 **迭代优化直到满足要求** - 自动修复错误，提升成功率
@@ -42,6 +42,15 @@
 - ✅ 快速原型开发，自动生成解析代码框架
 - ✅ 网页结构分析和数据提取
 - ✅ 减少手动编写解析代码的时间
+
+### 1.4 技术栈
+
+- **LangChain 1.0** - Agent框架和工具编排
+- **Claude Sonnet 4.5** - 代码生成和任务规划
+- **Qwen VL Max** - 视觉理解和结构提取
+- **DrissionPage** - 网页抓取和截图
+- **BeautifulSoup + lxml** - 目标解析库
+
 ---
 
 ## 2. 基本原理
@@ -108,17 +117,17 @@ HtmlParserAgent 采用**多阶段Agent架构**，通过以下步骤自动生成�
 **示例**：
 ```
 样本1: 8个字段  (title, author, date, content, ...)
-样本2: 6个字段  (title, author, content, ...)
+样本2: 6个字段  (title, author, error_code, ...)
 样本3: 16个字段 (title, author, date, tags, comments, ...)
 
 合并后: 25个字段
   - 必需字段: title, author (出现在所有样本)
-  - 可选字段: tags (仅出现在样本3)
+  - 可选字段: error_code (仅出现在样本2)
 ```
 
 #### 2.2.3 视觉理解驱动
 
-使用**多模态大模型**（如qwen-vl-max）分析页面截图：
+使用**多模态大模型**（qwen-vl-max）分析页面截图：
 
 - 识别页面布局和结构
 - 提取数据字段和类型
@@ -148,14 +157,14 @@ HtmlParserAgent 采用**多阶段Agent架构**，通过以下步骤自动生成�
 
 ### 3.1 环境要求
 
-- **Python**: 3.12 或更高版本
+- **Python**: 3.8 或更高版本
 - **浏览器**: Chrome/Chromium（用于网页截图）
 - **操作系统**: macOS, Linux, Windows
 
 ### 3.2 克隆项目
 
 ```bash
-git clone https://github.com/1041206149/HtmlParserAgent.git
+git clone https://github.com/yourusername/HtmlParserAgent.git
 cd HtmlParserAgent
 ```
 
@@ -287,7 +296,7 @@ from agent import ParserAgent
 # 创建Agent实例
 agent = ParserAgent(output_dir="output/blog")
 
-# 准备URL列表（建议2个以上同类型URL）
+# 准备URL列表（建议2-5个同类型URL）
 urls = [
     "https://example.com/article1",
     "https://example.com/article2",
@@ -470,7 +479,7 @@ HtmlParserAgent/
 - ✅ **Claude Sonnet 4.5** - 推荐，代码质量高
 
 **视觉理解模型**：
-- ✅ **qwen-vl-max** - 推荐
+- ✅ **qwen-vl-max** - 推荐，中文支持好
 
 ---
 
