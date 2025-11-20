@@ -8,8 +8,10 @@ from datetime import datetime
 from pathlib import Path
 from loguru import logger
 from config.settings import settings
+from langchain_core.tools import tool
 
 
+@tool
 def capture_webpage_screenshot(
     url: str,
     save_path: str = None,

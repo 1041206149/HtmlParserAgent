@@ -2,17 +2,24 @@
 Agent 规划器
 负责分析任务并生成执行计划
 """
+import os
 from typing import List, Dict
 from loguru import logger
-from utils.llm_client import LLMClient
+from langchain_openai import ChatOpenAI
 from config.settings import settings
 
 
 class AgentPlanner:
     """Agent规划器，负责任务分析和计划生成"""
-    
+
     def __init__(self):
-        self.llm = LLMClient.for_scenario("agent")
+        # 使用 LangChain 1.0 的 ChatOpenAI
+        self.llm = ChatOpenAI(
+            model=settings.agent_model,
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url=os.getenv("OPENAI_API_BASE"),
+            temperature=settings.agent_temperature
+        )
     
     def create_plan(self, urls: List[str], domain: str = None, layout_type: str = None) -> Dict:
         """
@@ -34,17 +41,16 @@ class AgentPlanner:
         
         # 构建规划提示词
         prompt = self._build_planning_prompt(urls, domain, layout_type)
-        
-        # 调用LLM生成计划
-        response = self.llm.chat_completion(
-            messages=[
-                {"role": "system", "content": "你是一个专业的网页解析任务规划助手。"},
-                {"role": "user", "content": prompt}
-            ]
-        )
+
+        # 调用LLM生成计划 - 使用 LangChain 1.0 的 invoke
+        messages = [
+            {"role": "system", "content": "你是一个专业的网页解析任务规划助手。"},
+            {"role": "user", "content": prompt}
+        ]
+        response = self.llm.invoke(messages)
         
         # 解析计划
-        plan = self._parse_plan(response, urls, domain, layout_type)
+        plan = self._parse_plan(response.content, urls, domain, layout_type)
         
         logger.success(f"执行计划创建完成: {plan['steps']} 个步骤")
         return plan

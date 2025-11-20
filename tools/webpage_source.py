@@ -5,8 +5,10 @@
 from DrissionPage import ChromiumPage, ChromiumOptions
 from loguru import logger
 from config.settings import settings
+from langchain_core.tools import tool
 
 
+@tool
 def get_webpage_source(url: str, wait_time: int = 3) -> str:
     """
     获取网页的HTML源代码

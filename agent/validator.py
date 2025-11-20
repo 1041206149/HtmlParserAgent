@@ -3,20 +3,27 @@ Agent 验证器
 负责验证生成的解析代码是否正确
 """
 import sys
+import os
 import importlib.util
 from typing import Dict, List
 from pathlib import Path
 from loguru import logger
 from tools import get_webpage_source
-from utils.llm_client import LLMClient
+from langchain_openai import ChatOpenAI
 from config.settings import settings
 
 
 class AgentValidator:
     """Agent验证器，负责验证和优化生成的代码"""
-    
+
     def __init__(self):
-        self.llm = LLMClient.for_scenario("agent")
+        # 使用 LangChain 1.0 的 ChatOpenAI
+        self.llm = ChatOpenAI(
+            model=settings.agent_model,
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url=os.getenv("OPENAI_API_BASE"),
+            temperature=settings.agent_temperature
+        )
     
     def validate_parser(self, parser_path: str, test_urls: List[str]) -> Dict:
         """
@@ -90,10 +97,10 @@ class AgentValidator:
         
         try:
             logger.info(f"  测试URL: {url}")
-            
-            # 获取HTML
-            html = get_webpage_source(url)
-            
+
+            # 获取HTML - 使用 .invoke() 调用工具
+            html = get_webpage_source.invoke({"url": url})
+
             # 解析
             data = parser.parse(html)
             
@@ -170,13 +177,12 @@ class AgentValidator:
 
 请分析可能的原因并给出改进建议。
 """
-        
-        response = self.llm.chat_completion(
-            messages=[
-                {"role": "system", "content": "你是一个专业的代码审查和优化助手。"},
-                {"role": "user", "content": prompt}
-            ]
-        )
-        
-        return response
+
+        messages = [
+            {"role": "system", "content": "你是一个专业的代码审查和优化助手。"},
+            {"role": "user", "content": prompt}
+        ]
+        response = self.llm.invoke(messages)
+
+        return response.content
 

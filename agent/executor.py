@@ -80,17 +80,22 @@ class AgentExecutor:
         try:
             # 1. 获取HTML源码
             logger.info("  [1/3] 获取HTML源码...")
-            result['html'] = get_webpage_source(url)
-            
+            result['html'] = get_webpage_source.invoke({"url": url})
+
             # 2. 截图
             logger.info("  [2/3] 截图...")
             screenshot_path = str(self.screenshots_dir / f"sample_{idx}.png")
-            result['screenshot'] = capture_webpage_screenshot(url, save_path=screenshot_path)
-            
+            result['screenshot'] = capture_webpage_screenshot.invoke({
+                "url": url,
+                "save_path": screenshot_path
+            })
+
             # 3. 提取JSON Schema
             logger.info("  [3/3] 提取JSON Schema...")
-            result['schema'] = extract_json_from_image(result['screenshot'])
-            
+            result['schema'] = extract_json_from_image.invoke({
+                "image_path": result['screenshot']
+            })
+
             result['success'] = True
             logger.success(f"  样本处理完成")
             
@@ -118,14 +123,14 @@ class AgentExecutor:
         try:
             # 合并所有样本的schema（简化版：使用第一个）
             merged_schema = successful_sample['schema']
-            
-            # 生成解析代码
-            parser_result = generate_parser_code(
-                html_content=successful_sample['html'],
-                target_json=merged_schema,
-                output_dir=str(self.parsers_dir)
-            )
-            
+
+            # 生成解析代码 - 使用 .invoke() 调用工具
+            parser_result = generate_parser_code.invoke({
+                "html_content": successful_sample['html'],
+                "target_json": merged_schema,
+                "output_dir": str(self.parsers_dir)
+            })
+
             logger.success(f"解析器生成完成: {parser_result['parser_path']}")
             return parser_result
             

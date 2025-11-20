@@ -7,7 +7,7 @@ import base64
 import re
 from typing import Dict
 from loguru import logger
-from utils.llm_client import LLMClient
+from langchain_core.tools import tool
 from config.settings import settings
 
 
@@ -40,9 +40,10 @@ def _build_prompt() -> str:
 }
 
 要求：
-1. 只返回 JSON，无任何解释文本
-2. 字段名必须使用英文 snake_case
-3. 每个字段必须有 type / description / value / confidence
+1. **只返回纯JSON，不要使用markdown代码块标记（不要用 ```json 或 ```）**
+2. 无任何解释文本，直接从 { 开始
+3. 字段名必须使用英文 snake_case
+4. 每个字段必须有 type / description / value / confidence
 """
 
 
@@ -59,9 +60,10 @@ def _parse_llm_response(response: str) -> Dict:
         raise Exception(f"解析模型响应失败: {str(e)}")
 
 
+@tool
 def extract_json_from_image(image_path: str) -> Dict:
     """
-    从图片中提取结构化页面信息
+    从网页截图中提取结构化页面信息
 
     Args:
         image_path: 图片文件路径
@@ -78,23 +80,50 @@ def extract_json_from_image(image_path: str) -> Dict:
         # 2. 构建提示词
         prompt = _build_prompt()
 
-        # 3. 创建 LLM 客户端（使用视觉理解场景）
-        llm = LLMClient.for_scenario("vision")
+        # 3. 使用 LangChain 1.0 的 ChatOpenAI
+        from langchain_openai import ChatOpenAI
+        import os
 
-        # 4. 调用视觉模型
-        response = llm.vision_completion(
-            prompt=prompt,
-            image_data=image_data,
-            max_tokens=settings.vision_max_tokens
+        model = ChatOpenAI(
+            model=settings.vision_model,
+            api_key=os.getenv("OPENAI_API_KEY"),
+            base_url=os.getenv("OPENAI_API_BASE"),
+            temperature=settings.vision_temperature
         )
 
+        # 4. 调用视觉模型
+        messages = [
+            {
+                "role": "user",
+                "content": [
+                    {"type": "text", "text": prompt},
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": f"data:image/png;base64,{image_data}"}
+                    }
+                ]
+            }
+        ]
+
+        response = model.invoke(messages)
+
         # 5. 提取 JSON
-        result = _parse_llm_response(response)
+        # 处理不同类型的响应
+        if hasattr(response, 'content'):
+            content = response.content
+        elif isinstance(response, str):
+            content = response
+        else:
+            content = str(response)
+
+        result = _parse_llm_response(content)
 
         logger.success(f"成功提取 {len(result)} 个字段")
         return result
 
     except Exception as e:
+        import traceback
         error_msg = f"图片处理失败: {str(e)}"
         logger.error(error_msg)
+        logger.error(f"详细错误: {traceback.format_exc()}")
         raise Exception(error_msg)
