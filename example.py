@@ -17,24 +17,27 @@ logger.add(
 
 
 def example_1_blog_parser():
-    """示例1: 生成博客文章解析器"""
+    """示例1: 生成博客文章解析器 - 多URL测试"""
     print("\n" + "="*70)
-    print("示例1: 生成博客文章解析器")
+    print("示例1: 生成博客文章解析器 - 多URL测试")
     print("="*70)
-    
+
+    # 使用多个URL测试迭代优化功能
     urls = [
         "https://stackoverflow.blog/2025/10/15/secure-coding-in-javascript/",
+        "https://stackoverflow.blog/2024/12/18/you-should-keep-a-developer-changelog/",
+        "https://stackoverflow.blog/2024/11/13/your-docs-are-your-infrastructure/",
     ]
-    
+
     agent = ParserAgent(output_dir="output/blog")
-    
+
     result = agent.generate_parser(
         urls=urls,
         domain="stackoverflow.blog",
         layout_type="blog_article",
         validate=True
     )
-    
+
     if result['success']:
         print(f"\n✓ 成功! 解析器路径: {result['parser_path']}")
         print(f"\n使用方法:")

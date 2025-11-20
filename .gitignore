@@ -19,6 +19,9 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+__pycache__/
+.idea/
+generated_parsers/
 
 # Virtual Environment
 venv/
@@ -54,3 +57,7 @@ Thumbs.db
 .pytest_cache/
 .coverage
 htmlcov/
+
+# demo files
+phase1_fundamentals/
+phase2_practical/

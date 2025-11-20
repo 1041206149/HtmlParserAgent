@@ -9,6 +9,7 @@ from .planner import AgentPlanner
 from .executor import AgentExecutor
 from .validator import AgentValidator
 from config.settings import settings
+from tools import fix_parser_code
 
 
 class ParserAgent:
@@ -111,25 +112,113 @@ class ParserAgent:
         validation_result: Dict,
         plan: Dict
     ) -> Dict:
-        """迭代优化解析器"""
+        """
+        迭代优化解析器
+
+        策略：
+        1. 分析验证失败的原因
+        2. 使用LLM修复代码
+        3. 重新验证
+        4. 重复直到达到成功率阈值或最大迭代次数
+        """
         max_iterations = plan.get('max_iterations', settings.max_iterations)
-        
+        current_validation = validation_result
+        current_parser_path = execution_result['final_parser']['parser_path']
+        current_code = execution_result['final_parser']['code']
+
+        logger.info(f"开始迭代优化，最大迭代次数: {max_iterations}")
+
         for iteration in range(1, max_iterations):
-            logger.info(f"\n优化迭代 {iteration}/{max_iterations-1}")
-            
-            # 获取改进建议
-            parser_code = execution_result['final_parser']['code']
-            suggestions = self.validator.suggest_improvements(validation_result, parser_code)
-            
-            logger.info(f"改进建议:\n{suggestions}")
-            
-            # TODO: 实现基于建议的代码改进
-            # 这里可以调用LLM重新生成代码，或者进行针对性修复
-            
-            logger.warning("自动优化功能待实现，请手动修改代码")
-            break
-        
-        return validation_result
+            logger.info(f"\n{'='*70}")
+            logger.info(f"优化迭代 {iteration}/{max_iterations-1}")
+            logger.info(f"当前成功率: {current_validation['success_rate']:.1%}")
+            logger.info(f"目标成功率: {settings.success_threshold:.1%}")
+            logger.info(f"{'='*70}")
+
+            # 如果已经达到成功率阈值，停止迭代
+            if current_validation['passed']:
+                logger.success(f"已达到成功率阈值，停止迭代")
+                break
+
+            # 收集验证错误
+            validation_errors = self._collect_validation_errors(current_validation)
+
+            if not validation_errors:
+                logger.warning("没有具体的错误信息，无法继续优化")
+                break
+
+            logger.info(f"发现 {len(validation_errors)} 个验证错误")
+
+            # 使用LLM修复代码
+            logger.info("调用LLM修复代码...")
+            fix_result = fix_parser_code.invoke({
+                "original_code": current_code,
+                "validation_errors": validation_errors,
+                "target_json": execution_result['final_parser'].get('config', {}),
+                "html_sample": None  # 可以传入HTML样本
+            })
+
+            if not fix_result.get('success'):
+                logger.error(f"代码修复失败: {fix_result.get('error')}")
+                break
+
+            # 保存修复后的代码
+            fixed_code = fix_result['fixed_code']
+            logger.info("保存修复后的代码...")
+
+            # 更新解析器文件
+            with open(current_parser_path, 'w', encoding='utf-8') as f:
+                f.write(fixed_code)
+
+            logger.success(f"代码已更新: {current_parser_path}")
+
+            # 重新验证
+            logger.info("重新验证修复后的代码...")
+            new_validation = self.validator.validate_parser(
+                current_parser_path,
+                plan.get('sample_urls', [])
+            )
+
+            # 检查是否有改进
+            old_rate = current_validation['success_rate']
+            new_rate = new_validation['success_rate']
+
+            logger.info(f"成功率变化: {old_rate:.1%} -> {new_rate:.1%}")
+
+            if new_rate > old_rate:
+                logger.success(f"✓ 成功率提升了 {(new_rate - old_rate):.1%}")
+                current_validation = new_validation
+                current_code = fixed_code
+
+                # 更新execution_result中的代码
+                execution_result['final_parser']['code'] = fixed_code
+            elif new_rate == old_rate:
+                logger.warning("成功率没有变化")
+                current_validation = new_validation
+                current_code = fixed_code
+            else:
+                logger.error(f"✗ 成功率下降了 {(old_rate - new_rate):.1%}，回滚修改")
+                # 回滚代码
+                with open(current_parser_path, 'w', encoding='utf-8') as f:
+                    f.write(current_code)
+                logger.info("已回滚到上一个版本")
+                break
+
+        return current_validation
+
+    def _collect_validation_errors(self, validation_result: Dict) -> List[Dict]:
+        """收集验证错误信息"""
+        errors = []
+
+        for test in validation_result.get('tests', []):
+            if not test.get('success'):
+                errors.append({
+                    'url': test.get('url'),
+                    'error': test.get('error', 'Unknown error'),
+                    'details': test.get('details', '')
+                })
+
+        return errors
     
     def _generate_summary(self, execution_result: Dict, validation_result: Dict = None) -> str:
         """生成执行总结"""

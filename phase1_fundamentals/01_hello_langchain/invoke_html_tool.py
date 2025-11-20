@@ -1,13 +1,14 @@
 import os
 
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI
+
 
 # 导入网页工具
 from tools.webpage_source import get_webpage_source
 from tools.webpage_chunker import chunk_webpage
 from tools.webpage_screenshot import capture_webpage_screenshot
 
+from langchain_openai import ChatOpenAI
 load_dotenv()
 
 # 使用中转节点
