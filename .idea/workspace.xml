@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="ee6a180d-bae9-42b8-b2b2-3cd1504312b9" name="更改" comment="添加迭代逻辑">
+      <change afterPath="$PROJECT_DIR$/CHANGES_SUMMARY.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/NEW_FLOW_GUIDE.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/QUICK_START.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test_new_flow.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent/executor.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/executor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/agent/orchestrator.py" beforeDir="false" afterPath="$PROJECT_DIR$/agent/orchestrator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tools/code_fixer.py" beforeDir="false" afterPath="$PROJECT_DIR$/tools/code_fixer.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="langchain0-1" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;1041206149&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/ccprocessor/web2json-agent&quot;,
+    &quot;accountId&quot;: &quot;56972e3b-370c-475b-bc5b-89080dc0bdd4&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="35SdKVZEXmX7ijg5vfUuUTm7S0h" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "JavaScript 调试.sample.html.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python 测试.pytest (test.py 内).executor": "Run",
+    "Python 测试.pytest (test_basic.py 内).executor": "Run",
+    "Python 测试.pytest (test_comprehensive.py 内).executor": "Run",
+    "Python 测试.pytest (test_langchain_agent.py 内).executor": "Run",
+    "Python 测试.pytest (test_llm_client.py 内).executor": "Run",
+    "Python 测试.test.test_url 的 pytest.executor": "Run",
+    "Python 测试.test.test_webpage_tools_get_source 的 pytest.executor": "Run",
+    "Python.demo_full_workflow.executor": "Run",
+    "Python.example_iterative.executor": "Run",
+    "Python.example_langchain_agent.executor": "Run",
+    "Python.generated_parser.executor": "Run",
+    "Python.invoke_html_tool.executor": "Run",
+    "Python.langchain_agent.executor": "Run",
+    "Python.llm_client.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.main_langchain.executor": "Run",
+    "Python.run_all_tests.executor": "Run",
+    "Python.test.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHELLCHECK.PATH": "/Users/brown/Library/Application Support/JetBrains/PyCharm2025.2/plugins/Shell Script/shellcheck",
+    "git-widget-placeholder": "diedai",
+    "last_opened_file_path": "/Users/brown/Projects/HtmlParserAgent",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.github.copilot.settings.completions.CompletionsConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/tools" />
+      <recent name="$PROJECT_DIR$/outputs/test_example1/stage3_codegen" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python 测试.test.test_webpage_tools_get_source 的 pytest">
+    <configuration name="pytest (/Users/brown/Projects/HtmlParserAgent/test.py 内)" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="HtmlParserAgent" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;$PROJECT_DIR$/test.py&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test.test_url 的 pytest" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="HtmlParserAgent" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test.test_url&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test.test_webpage_tools_get_source 的 pytest" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="HtmlParserAgent" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test.test_webpage_tools_get_source&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python 测试.test.test_webpage_tools_get_source 的 pytest" />
+        <item itemvalue="Python 测试.test.test_url 的 pytest" />
+        <item itemvalue="Python 测试.pytest (/Users/brown/Projects/HtmlParserAgent/test.py 内)" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-3aa1da707db6-JavaScript-PY-252.27397.106" />
+        <option value="bundled-python-sdk-4e2b1448bda8-9a97661f3031-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.27397.106" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="ee6a180d-bae9-42b8-b2b2-3cd1504312b9" name="更改" comment="" />
+      <created>1763107342634</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763107342634</updated>
+      <workItem from="1763107343841" duration="14370000" />
+      <workItem from="1763287377103" duration="605000" />
+      <workItem from="1763289969036" duration="127000" />
+      <workItem from="1763349151756" duration="7561000" />
+      <workItem from="1763362294924" duration="26702000" />
+      <workItem from="1763463818523" duration="2444000" />
+      <workItem from="1763471921550" duration="6806000" />
+      <workItem from="1763539999234" duration="3000" />
+      <workItem from="1763544367277" duration="192000" />
+      <workItem from="1763544562967" duration="6892000" />
+      <workItem from="1763557117411" duration="1145000" />
+      <workItem from="1763607999899" duration="7168000" />
+      <workItem from="1763620175839" duration="2628000" />
+      <workItem from="1763623623581" duration="958000" />
+      <workItem from="1763628230589" duration="87000" />
+      <workItem from="1763629978298" duration="209000" />
+      <workItem from="1763630286331" duration="59000" />
+      <workItem from="1763632387834" duration="622000" />
+      <workItem from="1763952218926" duration="9362000" />
+      <workItem from="1764040134209" duration="2835000" />
+      <workItem from="1764042979405" duration="105000" />
+      <workItem from="1764043086293" duration="2379000" />
+    </task>
+    <task id="LOCAL-00001" summary="简化代码">
+      <option name="closed" value="true" />
+      <created>1763107431420</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1763107431420</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Merge remote-tracking branch 'origin/main'">
+      <option name="closed" value="true" />
+      <created>1763450536182</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1763450536182</updated>
+    </task>
+    <task id="LOCAL-00003" summary="让模型自己判断需要哪些字段，而不是在prompt中预先给出">
+      <option name="closed" value="true" />
+      <created>1763456625954</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1763456625954</updated>
+    </task>
+    <task id="LOCAL-00004" summary="删除无关文件">
+      <option name="closed" value="true" />
+      <created>1763457730946</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1763457730946</updated>
+    </task>
+    <task id="LOCAL-00005" summary="框架0.1（无法运行）">
+      <option name="closed" value="true" />
+      <created>1763549844578</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1763549844578</updated>
+    </task>
+    <task id="LOCAL-00006" summary="删除md">
+      <option name="closed" value="true" />
+      <created>1763952693812</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1763952693812</updated>
+    </task>
+    <task id="LOCAL-00007" summary="添加迭代逻辑">
+      <option name="closed" value="true" />
+      <created>1764042627857</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1764042627857</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="origin/langchain0-1" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="简化代码" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/main'" />
+    <MESSAGE value="让模型自己判断需要哪些字段，而不是在prompt中预先给出" />
+    <MESSAGE value="删除无关文件" />
+    <MESSAGE value="框架0.1（无法运行）" />
+    <MESSAGE value="删除md" />
+    <MESSAGE value="添加迭代逻辑" />
+    <option name="LAST_COMMIT_MESSAGE" value="添加迭代逻辑" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$langchain_agent.coverage" NAME="langchain_agent 覆盖结果" MODIFIED="1763549725488" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$pytest__test_langchain_agent_py__.coverage" NAME="pytest (test_langchain_agent.py 内) 覆盖结果" MODIFIED="1763550515357" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$test_test_webpage_tools_get_source__pytest.coverage" NAME="test.test_webpage_tools_get_source 的 pytest 覆盖结果" MODIFIED="1763619156388" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$example_iterative.coverage" NAME="example_iterative 覆盖结果" MODIFIED="1763107804803" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/examples" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$pytest__test_llm_client_py__.coverage" NAME="pytest (test_llm_client.py 内) 覆盖结果" MODIFIED="1763108026779" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$run_all_tests.coverage" NAME="run_all_tests 覆盖结果" MODIFIED="1763108062714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$generated_parser.coverage" NAME="generated_parser 覆盖结果" MODIFIED="1763457566277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/outputs/test/stage3_codegen" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$test.coverage" NAME="test 覆盖结果" MODIFIED="1763463759397" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$pytest__test_py__.coverage" NAME="pytest (test.py 内) 覆盖结果" MODIFIED="1763616021388" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$pytest__test_basic_py__.coverage" NAME="pytest (test_basic.py 内) 覆盖结果" MODIFIED="1763108057909" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$example_langchain_agent.coverage" NAME="example_langchain_agent 覆盖结果" MODIFIED="1763549738724" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$main.coverage" NAME="main 覆盖结果" MODIFIED="1763107387777" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$pytest__test_comprehensive_py__.coverage" NAME="pytest (test_comprehensive.py 内) 覆盖结果" MODIFIED="1763362309115" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$llm_client.coverage" NAME="llm_client 覆盖结果" MODIFIED="1763108006669" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$main_langchain.coverage" NAME="main_langchain 覆盖结果" MODIFIED="1763549312728" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$demo_full_workflow.coverage" NAME="demo_full_workflow 覆盖结果" MODIFIED="1763550628697" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$invoke_html_tool.coverage" NAME="invoke_html_tool 覆盖结果" MODIFIED="1763615512273" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/HtmlParserAgent$test_test_url__pytest.coverage" NAME="test.test_url 的 pytest 覆盖结果" MODIFIED="1763619110572" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

@@ -1,0 +1,76 @@
+{
+  "version": "1.0",
+  "round": 2,
+  "fields": {
+    "page_type": {
+      "type": "string",
+      "description": "页面类型",
+      "required": true
+    },
+    "title": {
+      "type": "string",
+      "description": "文章标题",
+      "required": true
+    },
+    "author": {
+      "type": "string",
+      "description": "作者姓名",
+      "required": true
+    },
+    "publication_date": {
+      "type": "string",
+      "description": "发布日期",
+      "required": true
+    },
+    "content": {
+      "type": "string",
+      "description": "文章正文内容",
+      "required": true
+    },
+    "section_headings": {
+      "type": "array",
+      "description": "文章章节标题列表",
+      "required": true
+    },
+    "related_articles": {
+      "type": "array",
+      "description": "相关文章列表",
+      "required": true
+    },
+    "tags": {
+      "type": "array",
+      "description": "文章标签",
+      "required": true
+    },
+    "error_code": {
+      "type": "string",
+      "description": "错误代码",
+      "required": true
+    },
+    "error_message": {
+      "type": "string",
+      "description": "错误信息",
+      "required": true
+    },
+    "error_description": {
+      "type": "string",
+      "description": "错误详细描述",
+      "required": true
+    },
+    "button_text": {
+      "type": "string",
+      "description": "按钮文本",
+      "required": true
+    },
+    "additional_info": {
+      "type": "string",
+      "description": "附加信息",
+      "required": true
+    }
+  },
+  "options": {
+    "encoding": "utf-8",
+    "timeout": 30,
+    "retry": 3
+  }
+}
